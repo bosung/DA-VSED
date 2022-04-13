@@ -1,8 +1,9 @@
 # DA-VSED
 Implementation for the paper "Data Augmentation for Rare Symptoms in Vaccine Side-Effect Detection" (BioNLP 2022) in Pytorch
 
+You can download full data [here](https://drive.google.com/drive/folders/1x33F1psLYYcRLDTwNhjMDg8vU5AGofC6?usp=sharing)
+
 ## Train 
-Full dataset: https://drive.google.com/drive/folders/1x33F1psLYYcRLDTwNhjMDg8vU5AGofC6?usp=sharing
 
 ```
 python run_bart.py \
