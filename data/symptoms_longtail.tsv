@@ -622,7 +622,7 @@ symptomid	symptom_norm	symptom_ori	count
 2473	bloodfolliclestimulatinghormone	Blood follicle stimulating hormone	28
 2474	endstagerenaldisease	End stage renal disease	28
 2475	lunghyperinflation	Lung hyperinflation	28
-2476	ear,noseandthroatexaminationnormal	Ear, nose and throat examination normal	28
+2476	earnoseandthroatexaminationnormal	Ear, nose and throat examination normal	28
 2477	cardiactelemetrynormal	Cardiac telemetry normal	28
 2478	bodytemperaturenormal	Body temperature normal	28
 2479	officevisit	Office visit	28
@@ -674,7 +674,7 @@ symptomid	symptom_norm	symptom_ori	count
 2525	chronicleftventricularfailure	Chronic left ventricular failure	27
 2526	enzymeleveltest	Enzyme level test	27
 2527	coxsackievirustest	Coxsackie virus test	27
-2528	ear,noseandthroatexaminationabnormal	Ear, nose and throat examination abnormal	27
+2528	earnoseandthroatexaminationabnormal	Ear, nose and throat examination abnormal	27
 2529	vaccinationsitedysaesthesia	Vaccination site dysaesthesia	27
 2530	sars-cov-2rnaincreased	SARS-CoV-2 RNA increased	27
 2531	bloodlossanaemia	Blood loss anaemia	27
@@ -1246,7 +1246,7 @@ symptomid	symptom_norm	symptom_ori	count
 3097	endocrineophthalmopathy	Endocrine ophthalmopathy	17
 3098	renalreplacementtherapy	Renal replacement therapy	17
 3099	terminalinsomnia	Terminal insomnia	17
-3100	hallucinations,mixed	Hallucinations, mixed	17
+3100	hallucinationsmixed	Hallucinations, mixed	17
 3101	sputumculturepositive	Sputum culture positive	17
 3102	cerebralarterythrombosis	Cerebral artery thrombosis	17
 3103	antiphospholipidantibodiespositive	Antiphospholipid antibodies positive	17
@@ -2275,7 +2275,7 @@ symptomid	symptom_norm	symptom_ori	count
 4126	decompressivecraniectomy	Decompressive craniectomy	9
 4127	rightventricularejectionfractiondecreased	Right ventricular ejection fraction decreased	9
 4128	arteriovenousmalformation	Arteriovenous malformation	9
-4129	hallucination,olfactory	Hallucination, olfactory	9
+4129	hallucinationolfactory	Hallucination, olfactory	9
 4130	lymphocytecountabnormal	Lymphocyte count abnormal	9
 4131	ophthalmicscan	Ophthalmic scan	9
 4132	stressechocardiogramabnormal	Stress echocardiogram abnormal	9
@@ -3316,7 +3316,7 @@ symptomid	symptom_norm	symptom_ori	count
 5167	electrocardiogramqwaveabnormal	Electrocardiogram Q wave abnormal	5
 5168	vagusnervedisorder	Vagus nerve disorder	5
 5169	earinfectionbacterial	Ear infection bacterial	5
-5170	sleepdisorderduetogeneralmedicalcondition,insomniatype	Sleep disorder due to general medical condition, insomnia type	5
+5170	sleepdisorderduetogeneralmedicalconditioninsomniatype	Sleep disorder due to general medical condition, insomnia type	5
 5171	coughvariantasthma	Cough variant asthma	5
 5172	renalarterystenosis	Renal artery stenosis	5
 5173	cardiacventriculogramleft	Cardiac ventriculogram left	5
@@ -3352,7 +3352,7 @@ symptomid	symptom_norm	symptom_ori	count
 5203	frostbite	Frostbite	5
 5204	hyperglycaemichyperosmolarnonketoticsyndrome	Hyperglycaemic hyperosmolar nonketotic syndrome	5
 5205	middleearinflammation	Middle ear inflammation	5
-5206	hallucination,tactile	Hallucination, tactile	5
+5206	hallucinationtactile	Hallucination, tactile	5
 5207	dependenceonoxygentherapy	Dependence on oxygen therapy	5
 5208	urineelectrolytesnormal	Urine electrolytes normal	5
 5209	vascularcauterisation	Vascular cauterisation	5
@@ -3871,7 +3871,7 @@ symptomid	symptom_norm	symptom_ori	count
 5722	sensorimotordisorder	Sensorimotor disorder	4
 5723	subclavianarterythrombosis	Subclavian artery thrombosis	4
 5724	decreasedembryoviability	Decreased embryo viability	4
-5725	delusionaldisorder,unspecifiedtype	Delusional disorder, unspecified type	4
+5725	delusionaldisorderunspecifiedtype	Delusional disorder, unspecified type	4
 5726	hyperparathyroidism	Hyperparathyroidism	4
 5727	parvovirusb19testpositive	Parvovirus B19 test positive	4
 5728	ejaculationdisorder	Ejaculation disorder	4
@@ -4280,14 +4280,14 @@ symptomid	symptom_norm	symptom_ori	count
 6131	bloodpressureorthostaticnormal	Blood pressure orthostatic normal	3
 6132	topographycorneal	Topography corneal	3
 6133	plantarerythema	Plantar erythema	3
-6134	blood1,25-dihydroxycholecalciferol	Blood 1,25-dihydroxycholecalciferol	3
+6134	blood125-dihydroxycholecalciferol	Blood 1,25-dihydroxycholecalciferol	3
 6135	lightchainanalysisabnormal	Light chain analysis abnormal	3
 6136	redbloodcellrouleauxformationpresent	Red blood cell rouleaux formation present	3
 6137	trigeminalneuritis	Trigeminal neuritis	3
 6138	laryngitisviral	Laryngitis viral	3
 6139	oraldysaesthesia	Oral dysaesthesia	3
 6140	auricularswelling	Auricular swelling	3
-6141	blood1,25-dihydroxycholecalciferoldecreased	Blood 1,25-dihydroxycholecalciferol decreased	3
+6141	blood125-dihydroxycholecalciferoldecreased	Blood 1,25-dihydroxycholecalciferol decreased	3
 6142	productadministeredbywrongperson	Product administered by wrong person	3
 6143	amnioticfluidvolumedecreased	Amniotic fluid volume decreased	3
 6144	bundlebranchblockbilateral	Bundle branch block bilateral	3
@@ -6021,7 +6021,7 @@ symptomid	symptom_norm	symptom_ori	count
 7872	lungadenocarcinoma	Lung adenocarcinoma	2
 7873	retractednipple	Retracted nipple	2
 7874	delusionofgrandeur	Delusion of grandeur	2
-7875	delusionaldisorder,erotomanictype	Delusional disorder, erotomanic type	2
+7875	delusionaldisordererotomanictype	Delusional disorder, erotomanic type	2
 7876	b-lymphocytecountdecreased	B-lymphocyte count decreased	2
 7877	digestiveenzymeabnormal	Digestive enzyme abnormal	2
 7878	therapeuticproducteffectincreased	Therapeutic product effect increased	2
@@ -6170,7 +6170,7 @@ symptomid	symptom_norm	symptom_ori	count
 8021	subduralempyema	Subdural empyema	1
 8022	disabilityassessmentscalescoredecreased	Disability assessment scale score decreased	1
 8023	polyneuropathyinmalignantdisease	Polyneuropathy in malignant disease	1
-8024	blood1,25-dihydroxycholecalciferolincreased	Blood 1,25-dihydroxycholecalciferol increased	1
+8024	blood125-dihydroxycholecalciferolincreased	Blood 1,25-dihydroxycholecalciferol increased	1
 8025	calciumionisedincreased	Calcium ionised increased	1
 8026	lowerrespiratorytractinfectionviral	Lower respiratory tract infection viral	1
 8027	complicationsoftransplantedheart	Complications of transplanted heart	1
@@ -8543,7 +8543,7 @@ symptomid	symptom_norm	symptom_ori	count
 10394	expireddeviceused	Expired device used	1
 10395	pleuraldisorder	Pleural disorder	1
 10396	hipdeformity	Hip deformity	1
-10397	delusionaldisorder,persecutorytype	Delusional disorder, persecutory type	1
+10397	delusionaldisorderpersecutorytype	Delusional disorder, persecutory type	1
 10398	gastriccancerstagei	Gastric cancer stage I	1
 10399	vaccinationsiteischaemia	Vaccination site ischaemia	1
 10400	humanseminalplasmahypersensitivity	Human seminal plasma hypersensitivity	1
