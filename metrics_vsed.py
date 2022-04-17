@@ -33,6 +33,54 @@ _KWARGS_DESCRIPTION = """
 To be updated
 """
 
+class PrecRec():
+    def __init__(self) -> None:
+        self.global_tp = 0
+        self.n_target_doc = 0
+        self.global_n_pos = 0
+        self.global_n_true = 0
+
+        # for macro precision over whole symptom texts
+        self.p_sum = 0
+        # for macro recall
+        self.r_sum = 0
+
+    def macro_precision(self):
+        return self.p_sum/self.n_target_doc if self.n_target_doc != 0 else 0
+    
+    def macro_recall(self):
+        return self.r_sum/self.n_target_doc if self.n_target_doc != 0 else 0
+    
+    def macro_f1(self):
+        p = self.macro_precision()
+        r = self.macro_recall()
+        return 2*p*r/(p+r) if (p+r) != 0 else 0
+
+    def micro_precision(self):
+        return self.global_tp/self.global_n_pos if self.global_n_pos != 0 else 0
+
+    def micro_recall(self):
+        return self.global_tp/self.global_n_true if self.global_n_true != 0 else 0
+    
+    def micro_f1(self):
+        p = self.micro_precision()
+        r = self.micro_recall()
+        return 2*p*r/(p+r) if (p+r) != 0 else 0
+
+    def get_scores(self):
+        return {
+            "macro_presicion": self.macro_precision(),
+            "macro_recall": self.macro_recall(),
+            "micro_precision": self.micro_precision(),
+            "micro_recall": self.micro_recall(),
+            "macro_f1": self.macro_f1(),
+            "micro_f1": self.micro_f1(),
+            "global_tp": self.global_tp,
+            "global_n_pos": self.global_n_pos,
+            "global_n_true": self.global_n_true,
+            "n_target_doc": self.n_target_doc,
+        }
+
 @datasets.utils.file_utils.add_start_docstrings(_DESCRIPTION, _KWARGS_DESCRIPTION)
 class VSEDMetric(datasets.Metric):
     """ Metric for precision, recall and F1 on three test sets: Full, CUI-mapped, and Long-tail"""
@@ -100,19 +148,11 @@ class VSEDMetric(datasets.Metric):
             "longtail": self.symptoms_longtail
         }
 
-        results = {}
-        for tt in test_type:
-            results[tt] = {
-                "global_tp": 0,
-                "global_n_true": 0,
-                "global_n_pos": 0,
-                "macro_p": 0,
-                "macro_r": 0,
-                "n_target_doc": 0, # for a denominator of macro metrics 
-            }
+        full, cui, longtail = PrecRec(), PrecRec(), PrecRec()
+        test_class = [full, cui, longtail]
 
         for pred, ref in zip(predictions, references):
-            for tt in test_type:
+            for tt, cc in zip(test_type, test_class):
                 # the number of gold entities
                 gold_entities = ref["symptoms"]
                 local_gold_ent = []
@@ -122,8 +162,8 @@ class VSEDMetric(datasets.Metric):
                 
                 if len(local_gold_ent) > 0:
                     local_n_true = len(local_gold_ent)  # the number of gold entities per each example
-                    results[tt]["global_n_true"] += local_n_true
-                    results[tt]["n_target_doc"] += 1
+                    cc.global_n_true += local_n_true
+                    cc.n_target_doc += 1
 
                     # get entities from generated texts
                     model_outputs = [x.strip().lower().replace(" ", "") for x in pred.strip().split(",")]
@@ -133,33 +173,25 @@ class VSEDMetric(datasets.Metric):
                             pred_symps.append(mo)
 
                     local_n_pos = len(pred_symps)
-                    results[tt]["global_n_pos"] += local_n_pos
+                    cc.global_n_pos += local_n_pos
 
+                    # get true positives
                     local_tp = 0
-                    for candi in local_gold_ent:
-                        if pred.find(candi) != -1:  # true positive
-                            local_tp += 1
-                            results[tt]["global_tp"] += 1
+                    tp_symps = set(local_gold_ent) & set(pred_symps) # true positive
+                    n_tp_symps = len(tp_symps)
+                    if n_tp_symps > 0:
+                        local_tp += n_tp_symps
+                        cc.global_tp += n_tp_symps
 
                     cur_p = (local_tp / local_n_pos) if local_n_pos != 0 else 0
                     cur_r = (local_tp / local_n_true) if local_n_true != 0 else 0
+                    cc.p_sum += cur_p
+                    cc.r_sum += cur_r
 
-                    results[tt]["macro_p"] += cur_p
-                    results[tt]["macro_r"] += cur_r
+        assert len(predictions) == full.n_target_doc
 
-        assert len(predictions) == results["full"]["n_target_doc"]
-
-        for tt in test_type:
-            # for macro
-            results[tt]["macro_precision"] = results[tt]["macro_p"]/results[tt]["n_target_doc"] if results[tt]["n_target_doc"] > 0 else 0
-            results[tt]["macro_recall"] = results[tt]["macro_r"]/results[tt]["n_target_doc"] if results[tt]["n_target_doc"] > 0 else 0
-
-            # for micro
-            results[tt]["micro_precision"] = results[tt]["global_tp"]/results[tt]["global_n_pos"] if results[tt]["global_n_pos"] > 0 else 0
-            results[tt]["micro_recall"] = results[tt]["global_tp"]/results[tt]["global_n_true"] if results[tt]["global_n_true"] > 0 else 0
-
-            # for F1 scores
-            results[tt]["macro_f1"] = 2*results[tt]["macro_precision"]*results[tt]["macro_recall"]/(results[tt]["macro_precision"]+results[tt]["macro_recall"]) if results[tt]["macro_precision"]+results[tt]["macro_recall"] != 0 else 0
-            results[tt]["micro_f1"] = 2*results[tt]["micro_precision"]*results[tt]["micro_recall"]/(results[tt]["micro_precision"]+results[tt]["micro_recall"]) if results[tt]["micro_precision"]+results[tt]["micro_recall"] != 0 else 0
+        results = {}
+        for tt, cc in zip(test_type, [full, cui, longtail]):
+            results[tt] = cc.get_scores()
 
         return results
