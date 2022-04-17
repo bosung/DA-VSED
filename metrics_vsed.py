@@ -47,7 +47,10 @@ class VSEDMetric(datasets.Metric):
             # This defines the format of each prediction and reference
             features=datasets.Features({
                 'predictions': datasets.Value('string'),
-                'references': datasets.Value('string'),
+                'references': {
+                        "vid": datasets.Value("int32"),
+                        "symptoms": datasets.features.Sequence(datasets.Value('string')),
+                }
             }),
             # Additional links to the codebase or references
             codebase_urls=["https://github.com/huggingface/datasets/blob/master/templates/new_metric_script.py"],
@@ -111,10 +114,11 @@ class VSEDMetric(datasets.Metric):
         for pred, ref in zip(predictions, references):
             for tt in test_type:
                 # the number of gold entities
+                gold_entities = ref["symptoms"]
                 local_gold_ent = []
-                for x in ref.split(","):
-                    if x.strip() in target_symp_set[tt]:
-                        local_gold_ent.append(x.strip())
+                for ge in gold_entities:
+                    if ge in target_symp_set[tt]:
+                        local_gold_ent.append(ge)
                 
                 if len(local_gold_ent) > 0:
                     local_n_true = len(local_gold_ent)  # the number of gold entities per each example
@@ -124,9 +128,10 @@ class VSEDMetric(datasets.Metric):
                     # get entities from generated texts
                     model_outputs = [x.strip().lower().replace(" ", "") for x in pred.strip().split(",")]
                     pred_symps = []
-                    for s in self.symptoms:  # TODO: need to be optimized !!
-                        if s in model_outputs:
-                            pred_symps.append(s)
+                    for mo in model_outputs:
+                        if mo in target_symp_set[tt]:
+                            pred_symps.append(mo)
+
                     local_n_pos = len(pred_symps)
                     results[tt]["global_n_pos"] += local_n_pos
 

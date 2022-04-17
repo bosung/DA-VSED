@@ -20,6 +20,7 @@ import math
 import os
 import random
 from pathlib import Path
+import json
 
 import datasets
 import nltk
@@ -393,6 +394,7 @@ def main():
             ]
 
         model_inputs["labels"] = labels["input_ids"]  # labels' input_ids (target's input_ids)
+        model_inputs["vid"] = examples["vid"]
         return model_inputs
 
     with accelerator.main_process_first():
@@ -425,6 +427,20 @@ def main():
             train_dataset, shuffle=True, collate_fn=data_collator, batch_size=args.per_device_train_batch_size
         )
         eval_dataloader = DataLoader(eval_dataset, collate_fn=data_collator, batch_size=args.per_device_eval_batch_size)
+
+        # iterator for dev evaluation
+        batch_gold_entities = []
+        ge_batch = []
+        for line in open(args.validation_file):
+            if len(ge_batch) == args.per_device_eval_batch_size:
+                batch_gold_entities.append(ge_batch)
+                ge_batch = []
+            obj = json.loads(line.strip())
+            ge_batch.append({"vid": obj["vid"], "symptoms": obj["symptoms"]})
+        if len(ge_batch) != 0:
+            batch_gold_entities.append(ge_batch)
+
+        assert len(batch_gold_entities) == len(eval_dataloader)
 
         # Optimizer
         # Split weights in two groups, one with weight decay and the other not.
@@ -484,7 +500,11 @@ def main():
         for epoch in range(args.num_train_epochs):
             model.train()
             for step, batch in enumerate(train_dataloader):
-                outputs = model(**batch)
+                outputs = model(
+                    batch["input_ids"],
+                    attention_mask=batch["attention_mask"],
+                    labels=batch["labels"]
+                )
                 loss = outputs.loss
                 loss = loss / args.gradient_accumulation_steps
                 accelerator.backward(loss)
@@ -499,7 +519,7 @@ def main():
                     break
 
             # evaluation on the dev set
-            evaluate(config, args, model, tokenizer, accelerator, eval_dataloader)
+            evaluate(config, args, model, tokenizer, accelerator, eval_dataloader, batch_gold_entities)
 
             if args.push_to_hub and epoch < args.num_train_epochs - 1:
                 accelerator.wait_for_everyone()
@@ -531,12 +551,25 @@ def main():
         )
         test_dataloader = DataLoader(test_dataset, collate_fn=data_collator, batch_size=args.per_device_eval_batch_size)
 
+        batch_gold_entities = []
+        ge_batch = []
+        for line in open(args.test_file):
+            if len(ge_batch) == args.per_device_eval_batch_size:
+                batch_gold_entities.append(ge_batch)
+                ge_batch = []
+            obj = json.loads(line.strip())
+            ge_batch.append({"vid": obj["vid"], "symptoms": obj["symptoms"]})
+        if len(ge_batch) != 0:
+            batch_gold_entities.append(ge_batch)
+
+        assert len(batch_gold_entities) == len(test_dataloader)
+
         model, test_dataloader = accelerator.prepare(model, test_dataloader)
 
-        evaluate(config, args, model, tokenizer, accelerator, test_dataloader)
+        evaluate(config, args, model, tokenizer, accelerator, test_dataloader, batch_gold_entities)
 
 
-def evaluate(config, args, model, tokenizer, accelerator, test_dataloader):
+def evaluate(config, args, model, tokenizer, accelerator, test_dataloader, batch_gold_entities):
     # Metric
     metric = load_metric("rouge")
     metric_vsed = load_metric("metrics_vsed.py")
@@ -547,7 +580,7 @@ def evaluate(config, args, model, tokenizer, accelerator, test_dataloader):
         "max_length": args.max_target_length if args is not None else config.max_length,
         "num_beams": args.num_beams,
     }
-    for step, batch in enumerate(test_dataloader):
+    for step, (batch, ref) in enumerate(zip(test_dataloader, batch_gold_entities)):
         with torch.no_grad():
             generated_tokens = accelerator.unwrap_model(model).generate(
                 batch["input_ids"],
@@ -584,7 +617,8 @@ def evaluate(config, args, model, tokenizer, accelerator, test_dataloader):
                     print("%d gold : %s" % (k, decoded_labels[k]))
 
             metric.add_batch(predictions=decoded_preds, references=decoded_labels)
-            metric_vsed.add_batch(predictions=decoded_preds, references=decoded_labels)
+            assert batch["vid"][0] == ref[0]["vid"]
+            metric_vsed.add_batch(predictions=decoded_preds, references=ref)
             progress_bar.update(1)
     
     # evaluate rouge
