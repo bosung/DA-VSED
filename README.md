@@ -22,6 +22,25 @@ python run_bart.py \
     --do_train
 ```
 
+for the multi-GPU setting
+```
+python -m torch.distributed.launch \
+    --nproc_per_node=2 run_bart.py \
+    --model_name_or_path facebook/bart-base \
+    --max_source_length 256 \
+    --max_target_length 128 \
+    --per_device_train_batch_size 16 \
+    --gradient_accumulation_steps 2 \
+    --learning_rate 2e-5 \
+    --num_train_epochs 5 \
+    --output_dir {output_dir} \
+    --text_column symptom_text \
+    --summary_column symptoms \
+    --train_file data/train.json \
+    --validation_file data/dev.json \
+    --do_train
+```
+
 ## Test
 ```
 python run_bart.py \
